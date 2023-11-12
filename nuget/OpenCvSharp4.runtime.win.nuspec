@@ -1,37 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>OpenCvSharp4.runtime.win</id>
-        <version>4.6.0.20220607</version>
-        <title>OpenCvSharp4 native bindings for Windows x64/x86 (except UWP)</title>
-        <authors>shimat</authors>
-        <license type="expression">Apache-2.0</license>
-        <projectUrl>https://github.com/shimat/opencvsharp</projectUrl>
-        <iconUrl>https://raw.githubusercontent.com/shimat/opencvsharp/master/nuget/icon/opencvsharp.png</iconUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Internal implementation package for OpenCvSharp to work on Windows except UWP.</description>
-        <summary>Internal implementation package for OpenCvSharp to work on Windows except UWP.</summary>
-        <releaseNotes></releaseNotes>
-        <copyright>Copyright 2008-2020</copyright>
-        <tags>Image Processing OpenCV Wrapper FFI opencvsharp</tags>
-        <repository type="git" url="https://github.com/shimat/opencvsharp.git" />
-        <dependencies>
-            <group targetFramework="net48"></group>
-            <group targetFramework="netstandard2.1"></group>
-            <group targetFramework="netcoreapp3.1"></group>
-            <group targetFramework="net6.0"></group>
-        </dependencies>
-        <frameworkAssemblies>
-        </frameworkAssemblies>
-    </metadata>
-    <files>
-        <file src="..\src\Release\x64\OpenCvSharpExtern.dll"   target="runtimes\win-x64\native" />
-        <file src="..\src\Release\Win32\OpenCvSharpExtern.dll" target="runtimes\win-x86\native" />
-        <file src="..\opencv_files\opencv480_win_x64\x64\vc17\bin\opencv_videoio_ffmpeg480_64.dll" target="runtimes\win-x64\native" />
-        <file src="..\opencv_files\opencv480_win_x86\x86\vc17\bin\opencv_videoio_ffmpeg480.dll"    target="runtimes\win-x86\native" />
-        <file src="OpenCvSharp4.runtime.win.props" target="build\net48\OpenCvSharp4.runtime.win.props" />
-        <file src="OpenCvSharp4.runtime.win.props" target="build\netstandard\OpenCvSharp4.runtime.win.props" />
-        <file src="OpenCvSharp4.runtime.win.props" target="build\netcoreapp\OpenCvSharp4.runtime.win.props" />
-        <file src="OpenCvSharp4.runtime.win.props" target="build\net5.0\OpenCvSharp4.runtime.win.props" />
-    </files>
+  <metadata>
+    <id>OpenCvSharpUnity4.runtime.win</id>
+    <version>4.8.0.20231112-beta</version>
+    <title>OpenCvSharpUnity4 native bindings for Windows x64/x86 (except UWP)</title>
+    <authors>shimat</authors>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/shimat/opencvsharp</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/shimat/opencvsharp/master/nuget/icon/opencvsharp.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Internal implementation package for OpenCvSharp to work on Windows except UWP.</description>
+    <summary>Internal implementation package for OpenCvSharp to work on Windows except UWP.</summary>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Copyright 2008-2020</copyright>
+    <tags>Image Processing OpenCV Wrapper FFI opencvsharp</tags>
+    <repository type="git" url="https://github.com/shimat/opencvsharp.git" />
+    <dependencies>
+      <group targetFramework="net48">
+      </group>
+      <group targetFramework="netstandard2.1">
+      </group>
+      <group targetFramework="netcoreapp3.1">
+      </group>
+      <group targetFramework="net6.0">
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="..\src\Release\x64\OpenCvSharpExtern.dll" target="runtimes\win-x64\native" />
+    <file src="..\src\Release\Win32\OpenCvSharpExtern.dll" target="runtimes\win-x86\native" />
+    <file src="..\opencv_files\opencv480_win_x64\x64\vc17\bin\opencv_videoio_ffmpeg480_64.dll" target="runtimes\win-x64\native" />
+    <file src="..\opencv_files\opencv480_win_x86\x86\vc17\bin\opencv_videoio_ffmpeg480.dll" target="runtimes\win-x86\native" />
+    <file src="OpenCvSharpUnity4.runtime.win.props" target="build\net48\OpenCvSharpUnity4.runtime.win.props" />
+    <file src="OpenCvSharpUnity4.runtime.win.props" target="build\netstandard\OpenCvSharpUnity4.runtime.win.props" />
+    <file src="OpenCvSharpUnity4.runtime.win.props" target="build\netcoreapp\OpenCvSharpUnity4.runtime.win.props" />
+    <file src="OpenCvSharpUnity4.runtime.win.props" target="build\net5.0\OpenCvSharpUnity4.runtime.win.props" />
+  </files>
 </package>
