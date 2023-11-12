@@ -99,45 +99,61 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = "Stop"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Scripts"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Plugins\Windows\x86"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Plugins\Windows\x86_64"
+
+
+          Copy-Item "${env:GITHUB_WORKSPACE}\src\OpenCvSharp\Unity" "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Scripts" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\src\OpenCvSharp\bin\Release\netstandard2.0\OpenCvSharp.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Scripts" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\src\Release\x64\OpenCvSharpExtern.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Plugins\Windows\x86_64" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\src\Release\Win32\OpenCvSharpExtern.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Plugins\Windows\x86" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\opencv_files\opencv480_win_x64\x64\vc17\bin\opencv_videoio_ffmpeg480_64.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Plugins\Windows\x86_64" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\opencv_files\opencv480_win_x86\x86\vc17\bin\opencv_videoio_ffmpeg480.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\OpenCvSharpUnity\Plugins\Windows\x86" -Recurse -Force
+      # - name: Pack NuGet packages
+      #   shell: powershell
+      #   run: |
+      #     $ErrorActionPreference = "Stop"
           
-          $date = Get-Date -Format "yyyyMMdd"
-          $version = "${env:OPENCV_VERSION}.${date}-beta"
-          Write-Host "version = ${version}"
+          # $date = Get-Date -Format "yyyyMMdd"
+          # $version = "${env:OPENCV_VERSION}.${date}-beta"
+          # Write-Host "version = ${version}"
 
-          (Get-ChildItem $env:GITHUB_WORKSPACE -Recurse).Where{ $_.Extension -eq ".nuspec" }.ForEach{
-              [xml]$xml = Get-Content $_.FullName
-              $xml.package.metadata.version = $version
-              $xml.Save($_.FullName)
-          }
+          # (Get-ChildItem $env:GITHUB_WORKSPACE -Recurse).Where{ $_.Extension -eq ".nuspec" }.ForEach{
+          #     [xml]$xml = Get-Content $_.FullName
+          #     $xml.package.metadata.version = $version
+          #     $xml.Save($_.FullName)
+          # }
 
-          $windowsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Windows.nuspec"
-          $extensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Extensions.nuspec"
-          $wpfExtensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.WpfExtensions.nuspec"
-          $nuspecFiles = @($windowsNuspec, $extensionsNuspec, $wpfExtensionsNuspec)
-          foreach ( $nuspecFile in $nuspecFiles ) {
-              [xml]$xml = Get-Content $nuspecFile
-              foreach ($group in $xml.package.metadata.dependencies.ChildNodes){
-                  foreach ($dependency in $group.ChildNodes){
-                      $packageId = $dependency.GetAttribute("id")
-                      if ($packageId.StartsWith("OpenCvSharp")){
-                          Write-Host "before: " $packageId "=" $dependency.GetAttribute("version")
-                          $dependency.SetAttribute("version", $version)
-                          Write-Host "after:  " $packageId "=" $dependency.GetAttribute("version")
-                          $xml.Save($nuspecFile)
-                      }
-                      else {
-                          Write-Host "Skipped: " $packageId
-                      }
-                  }
-              }
-          }
+          # $windowsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Windows.nuspec"
+          # $extensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Extensions.nuspec"
+          # $wpfExtensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.WpfExtensions.nuspec"
+          # $nuspecFiles = @($windowsNuspec, $extensionsNuspec, $wpfExtensionsNuspec)
+          # foreach ( $nuspecFile in $nuspecFiles ) {
+          #     [xml]$xml = Get-Content $nuspecFile
+          #     foreach ($group in $xml.package.metadata.dependencies.ChildNodes){
+          #         foreach ($dependency in $group.ChildNodes){
+          #             $packageId = $dependency.GetAttribute("id")
+          #             if ($packageId.StartsWith("OpenCvSharp")){
+          #                 Write-Host "before: " $packageId "=" $dependency.GetAttribute("version")
+          #                 $dependency.SetAttribute("version", $version)
+          #                 Write-Host "after:  " $packageId "=" $dependency.GetAttribute("version")
+          #                 $xml.Save($nuspecFile)
+          #             }
+          #             else {
+          #                 Write-Host "Skipped: " $packageId
+          #             }
+          #         }
+          #     }
+          # }
 
-          nuget pack nuget/OpenCvSharp4.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.Windows.nuspec -OutputDirectory artifacts
-          nuget pack nuget/OpenCvSharp4.Extensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.WpfExtensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.runtime.win.nuspec -OutputDirectory artifacts
-          nuget pack nuget/OpenCvSharp4.runtime.uwp.nuspec -OutputDirectory artifacts
+          # nuget pack nuget/OpenCvSharp4.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
+          # nuget pack nuget/OpenCvSharp4.Windows.nuspec -OutputDirectory artifacts
+          # nuget pack nuget/OpenCvSharp4.Extensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
+          # nuget pack nuget/OpenCvSharp4.WpfExtensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
+          # nuget pack nuget/OpenCvSharp4.runtime.win.nuspec -OutputDirectory artifacts
+          # nuget pack nuget/OpenCvSharp4.runtime.uwp.nuspec -OutputDirectory artifacts
 
       - name: Test
         shell: powershell
