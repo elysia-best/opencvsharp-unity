@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_ANDROID
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using OpenCvSharp;
 using System;
@@ -163,4 +162,3 @@ namespace OpenCvSharp {
 
 	}
 }
-#endif
