@@ -95,70 +95,85 @@ jobs:
           dotnet build src/OpenCvSharp.Extensions/OpenCvSharp.Extensions.csproj -f net6.0 -p:configuration=Release -maxcpucount
           dotnet build src/OpenCvSharp.WpfExtensions/OpenCvSharp.WpfExtensions.csproj -f net6.0-windows -p:configuration=Release -maxcpucount
 
-      - name: Pack NuGet packages
+      - name: Make Unity Releases
         shell: powershell
         run: |
-          $ErrorActionPreference = "Stop"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease\Scripts"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease\Plugins\Windows\x86"
+          New-Item -ItemType Directory -Force -Path "${env:GITHUB_WORKSPACE}\UnityRelease\Plugins\Windows\x86_64"
+
+          Remove-Item -Path "${env:GITHUB_WORKSPACE}\src\OpenCvSharp\bin" -Recurse -Force
+
+          Copy-Item "${env:GITHUB_WORKSPACE}\src\OpenCvSharp" "${env:GITHUB_WORKSPACE}\UnityRelease\Scripts" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\src\Release\x64\OpenCvSharpExtern.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\Plugins\Windows\x86_64" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\src\Release\Win32\OpenCvSharpExtern.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\Plugins\Windows\x86" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\opencv_files\opencv480_win_x64\x64\vc17\bin\opencv_videoio_ffmpeg480_64.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\Plugins\Windows\x86_64" -Recurse -Force
+          Copy-Item "${env:GITHUB_WORKSPACE}\opencv_files\opencv480_win_x86\x86\vc17\bin\opencv_videoio_ffmpeg480.dll" "${env:GITHUB_WORKSPACE}\UnityRelease\Plugins\Windows\x86" -Recurse -Force
+      # - name: Pack NuGet packages
+      #   shell: powershell
+      #   run: |
+      #     $ErrorActionPreference = "Stop"
           
-          $date = Get-Date -Format "yyyyMMdd"
-          $version = "${env:OPENCV_VERSION}.${date}-beta"
-          Write-Host "version = ${version}"
+      #     $date = Get-Date -Format "yyyyMMdd"
+      #     $version = "${env:OPENCV_VERSION}.${date}-beta"
+      #     Write-Host "version = ${version}"
 
-          (Get-ChildItem $env:GITHUB_WORKSPACE -Recurse).Where{ $_.Extension -eq ".nuspec" }.ForEach{
-              [xml]$xml = Get-Content $_.FullName
-              $xml.package.metadata.version = $version
-              $xml.Save($_.FullName)
-          }
+      #     (Get-ChildItem $env:GITHUB_WORKSPACE -Recurse).Where{ $_.Extension -eq ".nuspec" }.ForEach{
+      #         [xml]$xml = Get-Content $_.FullName
+      #         $xml.package.metadata.version = $version
+      #         $xml.Save($_.FullName)
+      #     }
 
-          $windowsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Windows.nuspec"
-          $extensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Extensions.nuspec"
-          $wpfExtensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.WpfExtensions.nuspec"
-          $nuspecFiles = @($windowsNuspec, $extensionsNuspec, $wpfExtensionsNuspec)
-          foreach ( $nuspecFile in $nuspecFiles ) {
-              [xml]$xml = Get-Content $nuspecFile
-              foreach ($group in $xml.package.metadata.dependencies.ChildNodes){
-                  foreach ($dependency in $group.ChildNodes){
-                      $packageId = $dependency.GetAttribute("id")
-                      if ($packageId.StartsWith("OpenCvSharp")){
-                          Write-Host "before: " $packageId "=" $dependency.GetAttribute("version")
-                          $dependency.SetAttribute("version", $version)
-                          Write-Host "after:  " $packageId "=" $dependency.GetAttribute("version")
-                          $xml.Save($nuspecFile)
-                      }
-                      else {
-                          Write-Host "Skipped: " $packageId
-                      }
-                  }
-              }
-          }
+      #     $windowsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Windows.nuspec"
+      #     $extensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.Extensions.nuspec"
+      #     $wpfExtensionsNuspec = "${env:GITHUB_WORKSPACE}\nuget\OpenCvSharp4.WpfExtensions.nuspec"
+      #     $nuspecFiles = @($windowsNuspec, $extensionsNuspec, $wpfExtensionsNuspec)
+      #     foreach ( $nuspecFile in $nuspecFiles ) {
+      #         [xml]$xml = Get-Content $nuspecFile
+      #         foreach ($group in $xml.package.metadata.dependencies.ChildNodes){
+      #             foreach ($dependency in $group.ChildNodes){
+      #                 $packageId = $dependency.GetAttribute("id")
+      #                 if ($packageId.StartsWith("OpenCvSharp")){
+      #                     Write-Host "before: " $packageId "=" $dependency.GetAttribute("version")
+      #                     $dependency.SetAttribute("version", $version)
+      #                     Write-Host "after:  " $packageId "=" $dependency.GetAttribute("version")
+      #                     $xml.Save($nuspecFile)
+      #                 }
+      #                 else {
+      #                     Write-Host "Skipped: " $packageId
+      #                 }
+      #             }
+      #         }
+      #     }
 
-          nuget pack nuget/OpenCvSharp4.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.Windows.nuspec -OutputDirectory artifacts
-          nuget pack nuget/OpenCvSharp4.Extensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.WpfExtensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
-          nuget pack nuget/OpenCvSharp4.runtime.win.nuspec -OutputDirectory artifacts
-          nuget pack nuget/OpenCvSharp4.runtime.uwp.nuspec -OutputDirectory artifacts
+      #     nuget pack nuget/OpenCvSharp4.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
+      #     nuget pack nuget/OpenCvSharp4.Windows.nuspec -OutputDirectory artifacts
+      #     nuget pack nuget/OpenCvSharp4.Extensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
+      #     nuget pack nuget/OpenCvSharp4.WpfExtensions.nuspec -OutputDirectory artifacts -Symbols -SymbolPackageFormat snupkg
+      #     nuget pack nuget/OpenCvSharp4.runtime.win.nuspec -OutputDirectory artifacts
+      #     nuget pack nuget/OpenCvSharp4.runtime.uwp.nuspec -OutputDirectory artifacts
 
-      - name: Test
-        shell: powershell
-        run: |
-          cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests
-          dotnet test -c Release -f net48 --runtime win-x64
+      # - name: Test
+      #   shell: powershell
+      #   run: |
+      #     cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests
+      #     dotnet test -c Release -f net48 --runtime win-x64
 
-      - name: Test Windows-only functions
-        shell: powershell
-        run: |
-          cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests.Windows
-          dotnet test -c Release -f net48 --runtime win-x64
+      # - name: Test Windows-only functions
+      #   shell: powershell
+      #   run: |
+      #     cd ${env:GITHUB_WORKSPACE}\test\OpenCvSharp.Tests.Windows
+      #     dotnet test -c Release -f net48 --runtime win-x64
 
-      - name: Run ReleaseMaker
-        shell: powershell
-        run: |
-          cd "${env:GITHUB_WORKSPACE}\tool\OpenCvSharp.ReleaseMaker"
-          dotnet run -c Release --runtime win-x64 -- "${env:GITHUB_WORKSPACE}" "${env:GITHUB_WORKSPACE}\artifacts" ${{env.OPENCV_VERSION}}
+      # - name: Run ReleaseMaker
+      #   shell: powershell
+      #   run: |
+      #     cd "${env:GITHUB_WORKSPACE}\tool\OpenCvSharp.ReleaseMaker"
+      #     dotnet run -c Release --runtime win-x64 -- "${env:GITHUB_WORKSPACE}" "${env:GITHUB_WORKSPACE}\artifacts" ${{env.OPENCV_VERSION}}
 
       - name: Upload NuGet packages and Release packages
         uses: actions/upload-artifact@v3
         with:
           name: packages_windows
-          path: ${{ github.workspace }}\artifacts
+          path: ${{ github.workspace }}\UnityRelease

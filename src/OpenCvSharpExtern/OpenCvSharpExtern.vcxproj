@@ -260,8 +260,10 @@ copy "$(SolutionDir)opencv_files\opencv480_win_x64\x64\vc17\bin\opencv_videoio_f
     <ClCompile Include="xfeatures2d.cpp" />
     <ClCompile Include="ximgproc.cpp" />
     <ClCompile Include="xphoto.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="utils.h" />
     <ClInclude Include="aruco.h" />
     <ClInclude Include="bgsegm.h" />
     <ClInclude Include="calib3d.h" />
